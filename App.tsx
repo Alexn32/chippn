@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { View, Text, ActivityIndicator } from 'react-native';
 import Purchases from 'react-native-purchases';
 import Constants from 'expo-constants';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
@@ -41,7 +42,13 @@ function AppContent() {
   }, []);
 
   if (loading) {
-    return null; // Show splash screen
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff' }}>
+        <Text style={{ fontSize: 48, marginBottom: 20 }}>🧹</Text>
+        <ActivityIndicator size="large" color="#10B981" />
+        <Text style={{ marginTop: 20, color: '#6B7280' }}>Loading Chippn...</Text>
+      </View>
+    );
   }
 
   return (

@@ -41,26 +41,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (email: string, password: string, name: string) => {
     try {
-      const { error: signUpError } = await supabase.auth.signUp({
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
       });
 
       if (signUpError) throw signUpError;
+      if (!authData.user?.id) throw new Error('Sign up failed: no user created');
 
       // Create user profile
-      const { data } = await supabase.auth.getSession();
-      if (data.session?.user.id) {
-        const { error: profileError } = await supabase
-          .from('users')
-          .insert([{
-            id: data.session.user.id,
-            email,
-            display_name: name,
-          }]);
+      const { error: profileError } = await supabase
+        .from('users')
+        .insert([{
+          id: authData.user.id,
+          email,
+          display_name: name,
+        }]);
 
-        if (profileError) throw profileError;
-      }
+      if (profileError) throw profileError;
     } catch (error) {
       console.error('Sign up error:', error);
       throw error;

@@ -12,9 +12,11 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import { completeChore, uploadChorePhoto } from '../../lib/queries';
 import { verifyPhotoWithClaude } from '../../lib/claude';
+import { useHousehold } from '../../context/HouseholdContext';
 
 export default function CompleteChoreScreen({ route, navigation }: any) {
   const { assignmentId } = route.params;
+  const { household } = useHousehold();
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [verifying, setVerifying] = useState(false);
@@ -82,10 +84,15 @@ export default function CompleteChoreScreen({ route, navigation }: any) {
       return;
     }
 
+    if (!household?.id) {
+      Alert.alert('Error', 'No household found');
+      return;
+    }
+
     setLoading(true);
     try {
       // Upload photo
-      const photoUrl = await uploadChorePhoto('household-id', assignmentId, photoUri);
+      const photoUrl = await uploadChorePhoto(household.id, assignmentId, photoUri);
       
       // Mark as complete with verification result
       await completeChore(

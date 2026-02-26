@@ -28,7 +28,12 @@ export async function getUserHousehold(userId: string) {
     .limit(1)
     .single();
 
-  if (error) throw error;
+  if (error) {
+    if (error.code === 'PGRST116') {
+      return null; // No household found
+    }
+    throw error;
+  }
 
   const { data: household, error: householdError } = await supabase
     .from('households')
@@ -136,21 +141,8 @@ export async function createChore(
 
   if (error) throw error;
 
-  // If rotating, create first assignment
-  if (assignmentType === 'rotating' && data) {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    
-    const { error: assignError } = await supabase
-      .from('chore_assignments')
-      .insert([{
-        chore_id: data.id,
-        assigned_to: '', // Will be assigned based on members
-        due_date: tomorrow.toISOString().split('T')[0],
-      }]);
-
-    if (assignError) throw assignError;
-  }
+  // If rotating, assignment will be handled separately when members are available
+  // For now, just create the chore
 
   return data;
 }
@@ -256,24 +248,37 @@ export async function uploadChorePhoto(
   assignmentId: string,
   photoUri: string
 ) {
-  // Read file from URI
-  const response = await fetch(photoUri);
-  const blob = await response.blob();
+  try {
+    // Read file from URI
+    const response = await fetch(photoUri);
+    if (!response.ok) {
+      throw new Error('Failed to read photo file');
+    }
+    const blob = await response.blob();
 
-  const fileName = `${householdId}/${assignmentId}-${Date.now()}.jpg`;
+    const fileName = `${householdId}/${assignmentId}-${Date.now()}.jpg`;
 
-  const { data, error } = await supabase.storage
-    .from('chore-photos')
-    .upload(fileName, blob, {
-      contentType: 'image/jpeg',
-    });
+    const { data, error } = await supabase.storage
+      .from('chore-photos')
+      .upload(fileName, blob, {
+        contentType: 'image/jpeg',
+      });
 
-  if (error) throw error;
+    if (error) throw error;
+    if (!data) throw new Error('No upload response');
 
-  // Get public URL
-  const { data: publicUrl } = supabase.storage
-    .from('chore-photos')
-    .getPublicUrl(data.path);
+    // Get public URL
+    const { data: publicUrl } = supabase.storage
+      .from('chore-photos')
+      .getPublicUrl(data.path);
 
-  return publicUrl.publicUrl;
+    if (!publicUrl.publicUrl) {
+      throw new Error('Failed to get public URL');
+    }
+
+    return publicUrl.publicUrl;
+  } catch (error) {
+    console.error('Photo upload error:', error);
+    throw new Error(error instanceof Error ? error.message : 'Failed to upload photo');
+  }
 }
