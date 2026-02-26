@@ -1,0 +1,10 @@
+{
+  "functions": [
+    {
+      "key": "verify-chore",
+      "name": "verify-chore",
+      "version": "1",
+      "exclude_patterns": ["migrations"]
+    }
+  ]
+}
