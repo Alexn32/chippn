@@ -13,11 +13,17 @@
     },
     "ios": {
       "supportsTabletMode": true,
-      "bundleIdentifier": "com.chippn.app",
+      "bundleIdentifier": "com.alexn32.chippn",
       "buildNumber": "1",
+      "infoPlist": {
+        "NSCameraUsageDescription": "We need camera access to verify chore completion photos",
+        "NSPhotoLibraryUsageDescription": "We need photo library access to upload chore verification images",
+        "NSPhotoLibraryAddOnlyUsageDescription": "We need permission to save photos"
+      },
       "config": {
         "usesNonExemptEncryption": false
-      }
+      },
+      "team": "935300545"
     },
     "android": {
       "adaptiveIcon": {

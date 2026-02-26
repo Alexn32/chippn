@@ -13,7 +13,6 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { useHousehold } from '../../context/HouseholdContext';
 import { getUserChores } from '../../lib/queries';
-import { formatDistanceToNow } from 'date-fns';
 
 interface Chore {
   id: string;
