@@ -18,11 +18,12 @@ import RoleIdentificationScreen from '../screens/onboarding/RoleIdentificationSc
 import SetupChoiceScreen from '../screens/onboarding/SetupChoiceScreen';
 
 // App screens
-import HouseholdDashboardScreen from '../screens/app/HouseholdDashboardScreen';
+import HouseholdScreen from '../screens/app/HouseholdScreen';
 import MyChoresScreen from '../screens/app/MyChoresScreen';
 import AllChoresScreen from '../screens/app/AllChoresScreen';
 import ChatScreen from '../screens/app/ChatScreen';
 import ProfileScreen from '../screens/app/ProfileScreen';
+import CompleteChoreScreen from '../screens/app/CompleteChoreScreen';
 
 // Payment
 import PaywallScreen from '../screens/payment/PaywallScreen';
@@ -69,6 +70,15 @@ function AppTabs() {
         tabBarInactiveTintColor: '#9CA3AF',
       }}
     >
+      <Tab.Screen
+        name="Household"
+        component={HouseholdScreen}
+        options={{
+          title: 'Household',
+          tabBarLabel: 'Household',
+          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🏠</Text>,
+        }}
+      />
       <Tab.Screen
         name="MyChores"
         component={MyChoresScreen}
@@ -129,6 +139,14 @@ export default function RootNavigator() {
         ) : (
           <>
             <Stack.Screen name="App" component={AppTabs} />
+            <Stack.Screen 
+              name="CompleteChore"
+              component={CompleteChoreScreen}
+              options={{
+                presentation: 'modal',
+                headerShown: false,
+              }}
+            />
             <Stack.Screen 
               name="Paywall" 
               component={PaywallScreen}
