@@ -1,0 +1,49 @@
+{
+  "name": "chippn",
+  "version": "1.0.0",
+  "description": "AI-powered roommate coordination app",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "build:ios": "eas build --platform ios",
+    "submit:ios": "eas submit --platform ios",
+    "build:android": "eas build --platform android",
+    "submit:android": "eas submit --platform android"
+  },
+  "dependencies": {
+    "expo": "^51.0.0",
+    "expo-notifications": "^0.27.0",
+    "expo-image-picker": "^14.7.0",
+    "expo-image": "^1.12.0",
+    "expo-camera": "^14.1.0",
+    "expo-constants": "^15.4.0",
+    "react": "^18.2.0",
+    "react-native": "^0.73.0",
+    "react-native-gesture-handler": "^2.14.0",
+    "react-native-reanimated": "^3.6.0",
+    "react-native-screens": "^3.27.0",
+    "@react-navigation/native": "^6.1.9",
+    "@react-navigation/bottom-tabs": "^6.5.11",
+    "@react-navigation/native-stack": "^6.9.17",
+    "@react-native-async-storage/async-storage": "^1.21.0",
+    "@supabase/supabase-js": "^2.38.0",
+    "react-native-purchases": "^7.10.0",
+    "react-native-purchases-ui": "^7.10.0",
+    "zustand": "^4.4.7",
+    "react-hook-form": "^7.48.0",
+    "axios": "^1.6.2",
+    "date-fns": "^2.30.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-native": "^0.72.0",
+    "typescript": "^5.3.0",
+    "expo-cli": "^6.3.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
