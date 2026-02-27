@@ -5,21 +5,29 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
-  TextInput,
-  ActivityIndicator,
+  ScrollView,
   Alert,
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
+import Button from '../../components/UI/Button';
+import Input from '../../components/UI/Input';
+import { colors, spacing, typography } from '../../theme/tokens';
 
 export default function SignInScreen({ navigation }: any) {
   const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
   const handleSignIn = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please fill all fields');
+    const newErrors: { email?: string; password?: string } = {};
+
+    if (!email) newErrors.email = 'Email required';
+    if (!password) newErrors.password = 'Password required';
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
@@ -27,7 +35,7 @@ export default function SignInScreen({ navigation }: any) {
     try {
       await signIn(email, password);
     } catch (error) {
-      Alert.alert('Error', error instanceof Error ? error.message : 'Sign in failed');
+      Alert.alert('Sign In Failed', error instanceof Error ? error.message : 'Please try again');
     } finally {
       setLoading(false);
     }
@@ -35,56 +43,84 @@ export default function SignInScreen({ navigation }: any) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Back Button */}
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
           <Text style={styles.backButton}>← Back</Text>
         </TouchableOpacity>
 
-        <Text style={styles.title}>Welcome Back</Text>
-        <Text style={styles.subtitle}>Sign in to continue</Text>
-
-        <View style={styles.form}>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            editable={!loading}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            editable={!loading}
-          />
-
-          <TouchableOpacity onPress={() => Alert.alert('TODO', 'Reset password')}>
-            <Text style={styles.forgotText}>Forgot password?</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, loading && styles.buttonDisabled]}
-            onPress={handleSignIn}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Sign In</Text>
-            )}
-          </TouchableOpacity>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Welcome Back</Text>
+          <Text style={styles.subtitle}>Sign in to your account</Text>
         </View>
 
+        {/* Form */}
+        <View style={styles.form}>
+          <Input
+            label="Email"
+            placeholder="your@email.com"
+            value={email}
+            onChangeText={(text) => {
+              setEmail(text);
+              if (errors.email) setErrors({ ...errors, email: undefined });
+            }}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            editable={!loading}
+            error={errors.email}
+          />
+
+          <Input
+            label="Password"
+            placeholder="••••••••"
+            value={password}
+            onChangeText={(text) => {
+              setPassword(text);
+              if (errors.password) setErrors({ ...errors, password: undefined });
+            }}
+            secureTextEntry
+            editable={!loading}
+            error={errors.password}
+            containerStyle={{ marginTop: spacing.lg }}
+          />
+
+          {/* Forgot Password */}
+          <TouchableOpacity
+            onPress={() => Alert.alert('TODO', 'Password reset coming soon')}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Text style={styles.forgotPassword}>Forgot password?</Text>
+          </TouchableOpacity>
+
+          {/* Sign In Button */}
+          <Button
+            onPress={handleSignIn}
+            variant="primary"
+            fullWidth
+            loading={loading}
+            disabled={loading}
+            style={{ marginTop: spacing.xl }}
+          >
+            Sign In
+          </Button>
+        </View>
+
+        {/* Sign Up Link */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>Don't have an account? </Text>
           <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-            <Text style={styles.linkText}>Sign Up</Text>
+            <Text style={styles.footerLink}>Sign Up</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -92,70 +128,57 @@ export default function SignInScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.background,
+  },
+  scrollView: {
+    flex: 1,
   },
   content: {
-    flex: 1,
-    padding: 20,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.xl,
+    paddingBottom: spacing.xxxl,
   },
+
   backButton: {
-    fontSize: 16,
-    color: '#10B981',
-    marginBottom: 20,
+    ...typography.body,
+    color: colors.primary[500],
+    marginBottom: spacing.xxl,
+  },
+
+  header: {
+    marginBottom: spacing.xxxl,
   },
   title: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 8,
+    ...typography.h2,
+    color: colors.text.primary,
+    marginBottom: spacing.sm,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#6B7280',
-    marginBottom: 32,
+    ...typography.body,
+    color: colors.text.secondary,
   },
+
   form: {
-    gap: 16,
-    marginBottom: 32,
+    marginBottom: spacing.xxxl,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: '#F9FAFB',
-  },
-  forgotText: {
-    color: '#10B981',
-    fontSize: 14,
+
+  forgotPassword: {
+    ...typography.body,
+    color: colors.primary[500],
     textAlign: 'right',
+    marginTop: spacing.md,
   },
-  button: {
-    backgroundColor: '#10B981',
-    borderRadius: 8,
-    padding: 16,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
+
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
   },
   footerText: {
-    color: '#6B7280',
+    ...typography.body,
+    color: colors.text.secondary,
   },
-  linkText: {
-    color: '#10B981',
-    fontWeight: '600',
+  footerLink: {
+    ...typography.bodyMedium,
+    color: colors.primary[500],
   },
 });

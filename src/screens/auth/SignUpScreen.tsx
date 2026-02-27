@@ -5,11 +5,13 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
-  TextInput,
-  ActivityIndicator,
+  ScrollView,
   Alert,
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
+import Button from '../../components/UI/Button';
+import Input from '../../components/UI/Input';
+import { colors, spacing, typography } from '../../theme/tokens';
 
 export default function SignUpScreen({ navigation }: any) {
   const { signUp } = useAuth();
@@ -17,19 +19,33 @@ export default function SignUpScreen({ navigation }: any) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{
+    name?: string;
+    email?: string;
+    password?: string;
+  }>({});
 
   const handleSignUp = async () => {
-    if (!name || !email || !password) {
-      Alert.alert('Error', 'Please fill all fields');
+    const newErrors: typeof errors = {};
+
+    if (!name) newErrors.name = 'Name required';
+    if (!email) newErrors.email = 'Email required';
+    if (!password) newErrors.password = 'Password required';
+    if (password && password.length < 6) newErrors.password = 'At least 6 characters';
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
     setLoading(true);
     try {
       await signUp(email, password, name);
-      Alert.alert('Success', 'Account created! Check your email.');
+      Alert.alert('Account Created!', 'Check your email to confirm your account.', [
+        { text: 'Got it', onPress: () => navigation.navigate('SignIn') },
+      ]);
     } catch (error) {
-      Alert.alert('Error', error instanceof Error ? error.message : 'Sign up failed');
+      Alert.alert('Sign Up Failed', error instanceof Error ? error.message : 'Please try again');
     } finally {
       setLoading(false);
     }
@@ -37,59 +53,89 @@ export default function SignUpScreen({ navigation }: any) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Back Button */}
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
           <Text style={styles.backButton}>← Back</Text>
         </TouchableOpacity>
 
-        <Text style={styles.title}>Create Account</Text>
-        <Text style={styles.subtitle}>Join Chippn</Text>
-
-        <View style={styles.form}>
-          <TextInput
-            style={styles.input}
-            placeholder="Full Name"
-            value={name}
-            onChangeText={setName}
-            editable={!loading}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            editable={!loading}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            editable={!loading}
-          />
-
-          <TouchableOpacity
-            style={[styles.button, loading && styles.buttonDisabled]}
-            onPress={handleSignUp}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Sign Up</Text>
-            )}
-          </TouchableOpacity>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Create Account</Text>
+          <Text style={styles.subtitle}>Join Chippn and fix roommate chaos</Text>
         </View>
 
+        {/* Form */}
+        <View style={styles.form}>
+          <Input
+            label="Full Name"
+            placeholder="Your name"
+            value={name}
+            onChangeText={(text) => {
+              setName(text);
+              if (errors.name) setErrors({ ...errors, name: undefined });
+            }}
+            editable={!loading}
+            error={errors.name}
+          />
+
+          <Input
+            label="Email"
+            placeholder="your@email.com"
+            value={email}
+            onChangeText={(text) => {
+              setEmail(text);
+              if (errors.email) setErrors({ ...errors, email: undefined });
+            }}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            editable={!loading}
+            error={errors.email}
+            containerStyle={{ marginTop: spacing.lg }}
+          />
+
+          <Input
+            label="Password"
+            placeholder="••••••••"
+            value={password}
+            onChangeText={(text) => {
+              setPassword(text);
+              if (errors.password) setErrors({ ...errors, password: undefined });
+            }}
+            secureTextEntry
+            editable={!loading}
+            error={errors.password}
+            containerStyle={{ marginTop: spacing.lg }}
+          />
+
+          {/* Sign Up Button */}
+          <Button
+            onPress={handleSignUp}
+            variant="primary"
+            fullWidth
+            loading={loading}
+            disabled={loading}
+            style={{ marginTop: spacing.xl }}
+          >
+            Create Account
+          </Button>
+        </View>
+
+        {/* Sign In Link */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>Already have an account? </Text>
           <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
-            <Text style={styles.linkText}>Sign In</Text>
+            <Text style={styles.footerLink}>Sign In</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -97,65 +143,50 @@ export default function SignUpScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.background,
+  },
+  scrollView: {
+    flex: 1,
   },
   content: {
-    flex: 1,
-    padding: 20,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.xl,
+    paddingBottom: spacing.xxxl,
   },
+
   backButton: {
-    fontSize: 16,
-    color: '#10B981',
-    marginBottom: 20,
+    ...typography.body,
+    color: colors.primary[500],
+    marginBottom: spacing.xxl,
+  },
+
+  header: {
+    marginBottom: spacing.xxxl,
   },
   title: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 8,
+    ...typography.h2,
+    color: colors.text.primary,
+    marginBottom: spacing.sm,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#6B7280',
-    marginBottom: 32,
+    ...typography.body,
+    color: colors.text.secondary,
   },
+
   form: {
-    gap: 16,
-    marginBottom: 32,
+    marginBottom: spacing.xxxl,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: '#F9FAFB',
-  },
-  button: {
-    backgroundColor: '#10B981',
-    borderRadius: 8,
-    padding: 16,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
+
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
   },
   footerText: {
-    color: '#6B7280',
+    ...typography.body,
+    color: colors.text.secondary,
   },
-  linkText: {
-    color: '#10B981',
-    fontWeight: '600',
+  footerLink: {
+    ...typography.bodyMedium,
+    color: colors.primary[500],
   },
 });

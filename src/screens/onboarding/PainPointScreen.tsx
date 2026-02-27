@@ -1,41 +1,103 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+} from 'react-native';
+import Button from '../../components/UI/Button';
+import { colors, spacing, typography } from '../../theme/tokens';
 
 export default function PainPointScreen({ navigation }: any) {
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>Do you struggle with chores?</Text>
-        <Text style={styles.subtitle}>getting done around your home with your roommates?</Text>
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('LivingSituation')}
-          >
-            <Text style={styles.buttonText}>Yes, absolutely</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, styles.secondaryButton]}
-            onPress={() => navigation.navigate('LivingSituation')}
-          >
-            <Text style={[styles.buttonText, styles.secondaryButtonText]}>Not sure, continue anyway</Text>
-          </TouchableOpacity>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Progress */}
+        <View style={styles.progress}>
+          <View style={styles.progressBar} />
+          <View style={styles.progressBar} />
+          <View style={styles.progressBar} />
+          <View style={styles.progressBar} />
+          <View style={styles.progressBar} />
         </View>
-      </View>
+
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Do you struggle with chores at home?</Text>
+          <Text style={styles.subtitle}>
+            Getting things done with your roommates
+          </Text>
+        </View>
+
+        {/* Buttons */}
+        <View style={styles.buttons}>
+          <Button
+            onPress={() => navigation.navigate('LivingSituation')}
+            variant="primary"
+            fullWidth
+          >
+            Yes, absolutely
+          </Button>
+
+          <Button
+            onPress={() => navigation.navigate('LivingSituation')}
+            variant="secondary"
+            fullWidth
+          >
+            Not sure, continue anyway
+          </Button>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#ffffff' },
-  content: { flex: 1, padding: 20, justifyContent: 'center' },
-  title: { fontSize: 28, fontWeight: '700', color: '#111827', marginBottom: 8 },
-  subtitle: { fontSize: 16, color: '#6B7280', marginBottom: 40 },
-  buttonContainer: { gap: 12 },
-  button: { backgroundColor: '#10B981', borderRadius: 8, padding: 16, alignItems: 'center' },
-  secondaryButton: { backgroundColor: '#F9FAFB', borderWidth: 1, borderColor: '#E5E7EB' },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  secondaryButtonText: { color: '#111827' },
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  content: {
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.xl,
+    paddingBottom: spacing.xxxl,
+    justifyContent: 'center',
+  },
+
+  progress: {
+    flexDirection: 'row',
+    gap: spacing.xs,
+    marginBottom: spacing.xxxl,
+  },
+  progressBar: {
+    flex: 1,
+    height: 3,
+    backgroundColor: colors.neutral[200],
+    borderRadius: 9999,
+  },
+
+  header: {
+    marginBottom: spacing.xxxl,
+  },
+  title: {
+    ...typography.h2,
+    color: colors.text.primary,
+    marginBottom: spacing.sm,
+  },
+  subtitle: {
+    ...typography.body,
+    color: colors.text.secondary,
+  },
+
+  buttons: {
+    gap: spacing.md,
+  },
 });
