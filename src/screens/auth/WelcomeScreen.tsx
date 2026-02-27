@@ -3,58 +3,97 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   SafeAreaView,
+  ScrollView,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import Button from '../../components/UI/Button';
+import Card from '../../components/UI/Card';
+import { colors, spacing, typography, borderRadius } from '../../theme/tokens';
 
 type Props = NativeStackScreenProps<any, 'Welcome'>;
 
 export default function WelcomeScreen({ navigation }: Props) {
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        {/* Logo */}
-        <View style={styles.logoContainer}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Hero Section */}
+        <View style={styles.hero}>
           <Text style={styles.logo}>🧹</Text>
           <Text style={styles.appName}>Chippn</Text>
-          <Text style={styles.tagline}>Avoid awkward roommate conversations</Text>
+          <Text style={styles.tagline}>
+            Skip the awkward roommate conversations.{'\n'}
+            Fair chores, zero drama.
+          </Text>
         </View>
 
         {/* Features */}
-        <View style={styles.featuresContainer}>
-          <Feature icon="✅" text="Fair chore distribution" />
-          <Feature icon="✅" text="AI photo verification" />
-          <Feature icon="✅" text="Anonymous chat" />
-          <Feature icon="✅" text="Real accountability" />
-        </View>
+        <Card variant="elevated" padding="xl" style={styles.featuresCard}>
+          <Feature
+            icon="✨"
+            title="Fair distribution"
+            description="Everyone chips in equally"
+          />
+          <Feature
+            icon="📸"
+            title="Photo proof"
+            description="AI verifies completed chores"
+          />
+          <Feature
+            icon="💬"
+            title="Anonymous chat"
+            description="Say what needs to be said"
+          />
+          <Feature
+            icon="📊"
+            title="Real accountability"
+            description="Everyone sees who's keeping up"
+          />
+        </Card>
 
         {/* Buttons */}
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.primaryButton}
+          <Button
             onPress={() => navigation.navigate('SignUp')}
+            variant="primary"
+            fullWidth
           >
-            <Text style={styles.primaryButtonText}>Get Started</Text>
-          </TouchableOpacity>
+            Get Started Free
+          </Button>
 
-          <TouchableOpacity
-            style={styles.secondaryButton}
+          <Button
             onPress={() => navigation.navigate('SignIn')}
+            variant="secondary"
+            fullWidth
           >
-            <Text style={styles.secondaryButtonText}>Sign In</Text>
-          </TouchableOpacity>
+            Sign In
+          </Button>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
-function Feature({ icon, text }: { icon: string; text: string }) {
+interface FeatureProps {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+function Feature({ icon, title, description }: FeatureProps) {
   return (
     <View style={styles.feature}>
-      <Text style={styles.featureIcon}>{icon}</Text>
-      <Text style={styles.featureText}>{text}</Text>
+      <View style={styles.featureIconContainer}>
+        <Text style={styles.featureIcon}>{icon}</Text>
+      </View>
+      <View style={styles.featureContent}>
+        <Text style={styles.featureTitle}>{title}</Text>
+        <Text style={styles.featureDescription}>{description}</Text>
+      </View>
     </View>
   );
 }
@@ -62,80 +101,76 @@ function Feature({ icon, text }: { icon: string; text: string }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.background,
+  },
+  scrollView: {
+    flex: 1,
   },
   content: {
-    flex: 1,
-    paddingHorizontal: 20,
-    justifyContent: 'space-between',
-    paddingVertical: 40,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.xxxxl,
+    paddingBottom: spacing.xxxl,
   },
-  logoContainer: {
+
+  // Hero
+  hero: {
     alignItems: 'center',
-    marginBottom: 60,
+    marginBottom: spacing.xxxxl,
   },
   logo: {
     fontSize: 80,
-    marginBottom: 16,
+    marginBottom: spacing.lg,
   },
   appName: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 8,
+    ...typography.h1,
+    color: colors.text.primary,
+    marginBottom: spacing.sm,
   },
   tagline: {
-    fontSize: 16,
-    color: '#6B7280',
+    ...typography.body,
+    color: colors.text.secondary,
     textAlign: 'center',
+    lineHeight: 24,
+    paddingHorizontal: spacing.lg,
   },
-  featuresContainer: {
-    backgroundColor: '#F9FAFB',
-    borderRadius: 12,
-    padding: 24,
-    marginBottom: 40,
+
+  // Features
+  featuresCard: {
+    marginBottom: spacing.xxxl,
   },
   feature: {
     flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: spacing.xl,
+  },
+  featureIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.primary[50],
     alignItems: 'center',
-    marginBottom: 16,
+    justifyContent: 'center',
+    marginRight: spacing.md,
   },
   featureIcon: {
     fontSize: 20,
-    marginRight: 12,
   },
-  featureText: {
-    fontSize: 16,
-    color: '#111827',
-    fontWeight: '500',
+  featureContent: {
+    flex: 1,
+    paddingTop: 2,
   },
+  featureTitle: {
+    ...typography.bodyMedium,
+    color: colors.text.primary,
+    marginBottom: 2,
+  },
+  featureDescription: {
+    ...typography.bodySmall,
+    color: colors.text.secondary,
+  },
+
+  // Buttons
   buttonContainer: {
-    gap: 12,
-  },
-  primaryButton: {
-    backgroundColor: '#10B981',
-    borderRadius: 8,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    alignItems: 'center',
-  },
-  primaryButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  secondaryButton: {
-    backgroundColor: '#F9FAFB',
-    borderRadius: 8,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-  },
-  secondaryButtonText: {
-    color: '#111827',
-    fontSize: 16,
-    fontWeight: '600',
+    gap: spacing.md,
   },
 });
