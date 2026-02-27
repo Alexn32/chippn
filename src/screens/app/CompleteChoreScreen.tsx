@@ -8,11 +8,15 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  ScrollView,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { completeChore, uploadChorePhoto } from '../../lib/queries';
 import { verifyPhotoWithClaude } from '../../lib/claude';
 import { useHousehold } from '../../context/HouseholdContext';
+import Button from '../../components/UI/Button';
+import Card from '../../components/UI/Card';
+import { colors, spacing, typography, borderRadius, shadows } from '../../theme/tokens';
 
 export default function CompleteChoreScreen({ route, navigation }: any) {
   const { assignmentId } = route.params;
@@ -91,10 +95,7 @@ export default function CompleteChoreScreen({ route, navigation }: any) {
 
     setLoading(true);
     try {
-      // Upload photo
       const photoUrl = await uploadChorePhoto(household.id, assignmentId, photoUri);
-      
-      // Mark as complete with verification result
       await completeChore(
         assignmentId,
         photoUrl,
@@ -125,95 +126,127 @@ export default function CompleteChoreScreen({ route, navigation }: any) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backButton}>← Back</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>Complete Chore</Text>
-      </View>
-
-      <View style={styles.content}>
-        {!photoUri ? (
-          <>
-            <View style={styles.placeholder}>
-              <Text style={styles.placeholderEmoji}>📸</Text>
-              <Text style={styles.placeholderText}>No photo yet</Text>
-            </View>
-
-            <View style={styles.buttonGroup}>
-              <TouchableOpacity style={styles.primaryButton} onPress={takePhoto}>
-                <Text style={styles.buttonText}>📷 Take Photo</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.secondaryButton} onPress={pickImage}>
-                <Text style={styles.secondaryButtonText}>🖼️ Choose from Gallery</Text>
-              </TouchableOpacity>
-            </View>
-          </>
-        ) : (
-          <>
-            <Image source={{ uri: photoUri }} style={styles.photoPreview} />
-
-            <TouchableOpacity
-              style={styles.changePhotoButton}
-              onPress={() => setPhotoUri(null)}
-            >
-              <Text style={styles.changePhotoText}>Change Photo</Text>
-            </TouchableOpacity>
-
-            {!verification && (
-              <TouchableOpacity
-                style={[styles.verifyButton, verifying && styles.buttonDisabled]}
-                onPress={verifyPhoto}
-                disabled={verifying}
-              >
-                {verifying ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text style={styles.verifyButtonText}>🤖 Verify with AI</Text>
-                )}
-              </TouchableOpacity>
-            )}
-
-            {verification && (
-              <View style={[styles.verificationResult, verification.verified && styles.verificationSuccess]}>
-                <Text style={styles.verificationTitle}>
-                  {verification.verified ? '✅ Verified!' : '❌ Not verified'}
-                </Text>
-                <Text style={styles.verificationMessage}>{verification.reason}</Text>
-
-                {!verification.verified && (
-                  <TouchableOpacity style={styles.skipButton} onPress={handleCompleteWithoutPhoto}>
-                    <Text style={styles.skipButtonText}>Skip verification anyway</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            )}
-
-            <View style={styles.actionButtons}>
-              <TouchableOpacity
-                style={[styles.completeButton, loading && styles.buttonDisabled]}
-                onPress={handleCompleteWithPhoto}
-                disabled={loading}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text style={styles.completeButtonText}>Complete Chore</Text>
-                )}
-              </TouchableOpacity>
-            </View>
-          </>
-        )}
-
-        {!photoUri && (
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        {/* Header */}
+        <View style={styles.header}>
           <TouchableOpacity
-            style={styles.skipPhotoButton}
-            onPress={handleCompleteWithoutPhoto}
+            onPress={() => navigation.goBack()}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Text style={styles.skipPhotoText}>Complete without photo</Text>
+            <Text style={styles.backButton}>← Back</Text>
           </TouchableOpacity>
-        )}
+          <Text style={styles.title}>Complete Chore</Text>
+        </View>
+
+        {/* Content */}
+        <View style={styles.content}>
+          {!photoUri ? (
+            <>
+              <Card variant="elevated" padding="xl" style={styles.placeholder}>
+                <View style={styles.placeholderContent}>
+                  <Text style={styles.placeholderEmoji}>📸</Text>
+                  <Text style={styles.placeholderText}>Add a photo for verification</Text>
+                  <Text style={styles.placeholderSubtext}>Optional, but helps your roommates</Text>
+                </View>
+              </Card>
+
+              <View style={styles.buttonGroup}>
+                <Button
+                  onPress={takePhoto}
+                  variant="primary"
+                  fullWidth
+                >
+                  📷 Take Photo
+                </Button>
+
+                <Button
+                  onPress={pickImage}
+                  variant="secondary"
+                  fullWidth
+                >
+                  🖼️ Choose from Gallery
+                </Button>
+              </View>
+            </>
+          ) : (
+            <>
+              <Image source={{ uri: photoUri }} style={styles.photoPreview} />
+
+              <Button
+                onPress={() => setPhotoUri(null)}
+                variant="secondary"
+                fullWidth
+                style={{ marginBottom: spacing.lg }}
+              >
+                Change Photo
+              </Button>
+
+              {!verification && (
+                <Button
+                  onPress={verifyPhoto}
+                  variant="primary"
+                  fullWidth
+                  loading={verifying}
+                  disabled={verifying}
+                  style={{ marginBottom: spacing.lg }}
+                >
+                  🤖 Verify with AI
+                </Button>
+              )}
+
+              {verification && (
+                <Card
+                  variant={verification.verified ? 'default' : 'outlined'}
+                  padding="lg"
+                  style={[
+                    styles.verificationResult,
+                    verification.verified && styles.verificationSuccess,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.verificationTitle,
+                      {
+                        color: verification.verified
+                          ? colors.success
+                          : colors.error,
+                      },
+                    ]}
+                  >
+                    {verification.verified ? '✅ Looks good!' : '❌ Couldn\'t verify'}
+                  </Text>
+                  <Text style={styles.verificationMessage}>
+                    {verification.reasoning}
+                  </Text>
+
+                  {!verification.verified && (
+                    <Button
+                      onPress={handleCompleteWithoutPhoto}
+                      variant="ghost"
+                      fullWidth
+                      style={{ marginTop: spacing.md }}
+                    >
+                      Skip verification anyway
+                    </Button>
+                  )}
+                </Card>
+              )}
+            </>
+          )}
+        </View>
+      </ScrollView>
+
+      {/* Footer Buttons */}
+      <View style={styles.footer}>
+        <Button
+          onPress={photoUri ? handleCompleteWithPhoto : handleCompleteWithoutPhoto}
+          variant="primary"
+          fullWidth
+          loading={loading}
+          disabled={loading}
+        >
+          {photoUri ? 'Complete Chore' : 'Complete Without Photo'}
+        </Button>
       </View>
     </SafeAreaView>
   );
@@ -222,163 +255,87 @@ export default function CompleteChoreScreen({ route, navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.background,
+  },
+  scrollView: {
+    flex: 1,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: colors.neutral[200],
   },
   backButton: {
-    fontSize: 16,
-    color: '#10B981',
-    marginRight: 16,
+    ...typography.body,
+    color: colors.primary[500],
+    marginRight: spacing.lg,
   },
   title: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#111827',
+    ...typography.h3,
+    color: colors.text.primary,
   },
+
   content: {
-    flex: 1,
-    padding: 20,
+    padding: spacing.xl,
+    paddingBottom: spacing.xxxxl,
   },
+
   placeholder: {
-    flex: 1,
-    justifyContent: 'center',
+    marginBottom: spacing.xl,
+  },
+  placeholderContent: {
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
-    borderRadius: 12,
-    borderWidth: 2,
-    borderStyle: 'dashed',
-    borderColor: '#E5E7EB',
-    marginBottom: 24,
+    paddingVertical: spacing.xxxxl,
   },
   placeholderEmoji: {
     fontSize: 64,
-    marginBottom: 12,
+    marginBottom: spacing.lg,
   },
   placeholderText: {
-    fontSize: 16,
-    color: '#6B7280',
+    ...typography.h4,
+    color: colors.text.primary,
+    marginBottom: spacing.xs,
   },
+  placeholderSubtext: {
+    ...typography.bodySmall,
+    color: colors.text.secondary,
+  },
+
   buttonGroup: {
-    gap: 12,
+    gap: spacing.md,
   },
-  primaryButton: {
-    backgroundColor: '#10B981',
-    borderRadius: 8,
-    paddingVertical: 16,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  secondaryButton: {
-    backgroundColor: '#F9FAFB',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 8,
-    paddingVertical: 16,
-    alignItems: 'center',
-  },
-  secondaryButtonText: {
-    color: '#111827',
-    fontSize: 16,
-    fontWeight: '600',
-  },
+
   photoPreview: {
     width: '100%',
     height: 300,
-    borderRadius: 12,
-    marginBottom: 20,
+    borderRadius: borderRadius.lg,
+    marginBottom: spacing.xl,
+    ...shadows.md,
   },
-  changePhotoButton: {
-    backgroundColor: '#F9FAFB',
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  changePhotoText: {
-    color: '#6B7280',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  verifyButton: {
-    backgroundColor: '#10B981',
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  verifyButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
+
   verificationResult: {
-    backgroundColor: '#FEF3C7',
-    borderWidth: 1,
-    borderColor: '#F59E0B',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 20,
+    marginVertical: spacing.lg,
   },
   verificationSuccess: {
-    backgroundColor: '#F0FDF4',
-    borderColor: '#10B981',
+    backgroundColor: colors.primary[50],
   },
   verificationTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#111827',
-    marginBottom: 8,
+    ...typography.bodyMedium,
+    marginBottom: spacing.sm,
   },
   verificationMessage: {
-    fontSize: 14,
-    color: '#6B7280',
+    ...typography.body,
+    color: colors.text.secondary,
   },
-  skipButton: {
-    marginTop: 12,
-    padding: 8,
-    alignItems: 'center',
-  },
-  skipButtonText: {
-    color: '#F59E0B',
-    fontSize: 13,
-    fontWeight: '500',
-  },
-  actionButtons: {
-    gap: 12,
-  },
-  completeButton: {
-    backgroundColor: '#10B981',
-    borderRadius: 8,
-    paddingVertical: 16,
-    alignItems: 'center',
-  },
-  completeButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  skipPhotoButton: {
-    marginTop: 'auto',
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  skipPhotoText: {
-    color: '#10B981',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  buttonDisabled: {
-    opacity: 0.6,
+
+  footer: {
+    padding: spacing.xl,
+    borderTopWidth: 1,
+    borderTopColor: colors.neutral[200],
+    backgroundColor: colors.background,
+    ...shadows.lg,
   },
 });

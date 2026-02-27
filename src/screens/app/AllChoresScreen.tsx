@@ -113,7 +113,7 @@ export default function AllChoresScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.background,
   },
   center: {
     flex: 1,
@@ -133,17 +133,17 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.text.primary,
     marginBottom: 8,
   },
   emptySubtitle: {
     fontSize: 16,
-    color: '#6B7280',
+    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: 24,
   },
   createButton: {
-    backgroundColor: '#10B981',
+    backgroundColor: colors.primary[500],
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 24,
@@ -159,12 +159,12 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   choreCard: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     borderLeftWidth: 4,
-    borderLeftColor: '#10B981',
+    borderLeftColor: colors.primary[500],
   },
   choreHeader: {
     flexDirection: 'row',
@@ -178,11 +178,11 @@ const styles = StyleSheet.create({
   choreName: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.text.primary,
   },
   choreDescription: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.text.secondary,
     marginTop: 4,
   },
   choreMetaContainer: {
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
   },
   metaLabel: {
     fontSize: 13,
-    color: '#6B7280',
+    color: colors.text.secondary,
   },
   fab: {
     position: 'absolute',
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#10B981',
+    backgroundColor: colors.primary[500],
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',

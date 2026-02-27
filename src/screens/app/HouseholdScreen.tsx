@@ -120,7 +120,7 @@ export default function HouseholdScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.background,
   },
   content: {
     padding: 20,
@@ -136,36 +136,36 @@ const styles = StyleSheet.create({
   householdName: {
     fontSize: 32,
     fontWeight: '700',
-    color: '#111827',
+    color: colors.text.primary,
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 16,
-    color: '#6B7280',
+    color: colors.text.secondary,
   },
   inviteCard: {
     backgroundColor: '#F0FDF4',
     borderWidth: 2,
-    borderColor: '#10B981',
+    borderColor: colors.primary[500],
     borderRadius: 12,
     padding: 20,
     marginBottom: 32,
   },
   inviteLabel: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.text.secondary,
     textTransform: 'uppercase',
     marginBottom: 8,
   },
   inviteCode: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#10B981',
+    color: colors.primary[500],
     marginBottom: 16,
     letterSpacing: 2,
   },
   copyButton: {
-    backgroundColor: '#10B981',
+    backgroundColor: colors.primary[500],
     borderRadius: 8,
     padding: 12,
     alignItems: 'center',
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   },
   inviteHint: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.text.secondary,
     textAlign: 'center',
   },
   section: {
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.text.primary,
     marginBottom: 16,
   },
   membersList: {
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
   memberCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surface,
     borderRadius: 8,
     padding: 12,
   },
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#10B981',
+    backgroundColor: colors.primary[500],
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -220,15 +220,15 @@ const styles = StyleSheet.create({
   memberName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.text.primary,
   },
   memberEmail: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.text.secondary,
     marginTop: 4,
   },
   inviteMoreButton: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: '#E5E7EB',
     borderRadius: 8,
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   inviteMoreText: {
-    color: '#10B981',
+    color: colors.primary[500],
     fontSize: 16,
     fontWeight: '600',
   },

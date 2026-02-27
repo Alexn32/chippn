@@ -8,11 +8,13 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
-  FlatList,
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useHousehold } from '../../context/HouseholdContext';
 import { getUserChores } from '../../lib/queries';
+import Button from '../../components/UI/Button';
+import Card from '../../components/UI/Card';
+import { colors, spacing, typography, borderRadius, shadows } from '../../theme/tokens';
 
 interface Chore {
   id: string;
@@ -61,13 +63,13 @@ export default function MyChoresScreen({ navigation }: any) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return '#10B981';
+        return colors.success;
       case 'overdue':
-        return '#EF4444';
+        return colors.error;
       case 'pending':
-        return '#F59E0B';
+        return colors.warning;
       default:
-        return '#6B7280';
+        return colors.text.secondary;
     }
   };
 
@@ -97,9 +99,13 @@ export default function MyChoresScreen({ navigation }: any) {
             key={f}
             style={[styles.filterTab, filter === f && styles.filterTabActive]}
             onPress={() => setFilter(f)}
+            activeOpacity={0.7}
           >
             <Text
-              style={[styles.filterText, filter === f && styles.filterTextActive]}
+              style={[
+                styles.filterText,
+                filter === f && styles.filterTextActive,
+              ]}
             >
               {f === 'all' ? 'All' : f === 'pending' ? 'Pending' : 'Overdue'}
             </Text>
@@ -110,7 +116,7 @@ export default function MyChoresScreen({ navigation }: any) {
       {/* Chores List */}
       {loading ? (
         <View style={styles.center}>
-          <ActivityIndicator size="large" color="#10B981" />
+          <ActivityIndicator size="large" color={colors.primary[500]} />
         </View>
       ) : filteredChores.length === 0 ? (
         <View style={styles.empty}>
@@ -121,63 +127,66 @@ export default function MyChoresScreen({ navigation }: any) {
       ) : (
         <ScrollView style={styles.list} contentContainerStyle={{ paddingBottom: 100 }}>
           {filteredChores.map(chore => (
-            <View key={chore.id} style={styles.choreCard}>
-              <View style={styles.choreHeader}>
-                <View style={styles.choreTitle}>
-                  <Text style={styles.choreName}>{chore.chores.name}</Text>
-                  {chore.chores.description && (
-                    <Text style={styles.choreDescription}>{chore.chores.description}</Text>
-                  )}
-                </View>
-                <View
-                  style={[
-                    styles.statusBadge,
-                    { borderColor: getStatusColor(chore.status) },
-                  ]}
-                >
-                  <Text style={[styles.statusText, { color: getStatusColor(chore.status) }]}>
-                    {getStatusLabel(chore.status)}
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.choreMetaContainer}>
-                <View style={styles.choreMeta}>
-                  <Text style={styles.metaLabel}>📅 Due:</Text>
-                  <Text style={styles.metaValue}>
-                    {new Date(chore.due_date).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                    })}
-                  </Text>
-                </View>
-                <View style={styles.choreMeta}>
-                  <Text style={styles.metaLabel}>⏱️ {chore.chores.frequency}</Text>
-                </View>
-                {chore.chores.requires_photo && (
-                  <View style={styles.choreMeta}>
-                    <Text style={styles.metaLabel}>📸 Photo required</Text>
+            <TouchableOpacity
+              key={chore.id}
+              onPress={() => handleCompleteChore(chore.id)}
+              activeOpacity={0.6}
+            >
+              <Card variant="elevated" padding="lg" style={styles.choreCard}>
+                <View style={styles.choreHeader}>
+                  <View style={styles.choreTitle}>
+                    <Text style={styles.choreName}>{chore.chores.name}</Text>
+                    {chore.chores.description && (
+                      <Text style={styles.choreDescription}>
+                        {chore.chores.description}
+                      </Text>
+                    )}
                   </View>
-                )}
-              </View>
-
-              {chore.status === 'pending' && (
-                <TouchableOpacity
-                  style={styles.completeButton}
-                  onPress={() => handleCompleteChore(chore.id)}
-                >
-                  <Text style={styles.completeButtonText}>Complete Chore</Text>
-                </TouchableOpacity>
-              )}
-
-              {chore.status === 'completed' && (
-                <View style={styles.completedBanner}>
-                  <Text style={styles.completedText}>
-                    ✓ Completed {chore.completed_at ? 'recently' : ''}
-                  </Text>
+                  <View
+                    style={[
+                      styles.statusBadge,
+                      { borderColor: getStatusColor(chore.status) },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.statusText,
+                        { color: getStatusColor(chore.status) },
+                      ]}
+                    >
+                      {getStatusLabel(chore.status)}
+                    </Text>
+                  </View>
                 </View>
-              )}
-            </View>
+
+                <View style={styles.choreMetaContainer}>
+                  <View style={styles.choreMeta}>
+                    <Text style={styles.metaLabel}>📅 Due:</Text>
+                    <Text style={styles.metaValue}>
+                      {new Date(chore.due_date).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                      })}
+                    </Text>
+                  </View>
+                  <View style={styles.choreMeta}>
+                    <Text style={styles.metaLabel}>🔄 {chore.chores.frequency}</Text>
+                  </View>
+                </View>
+
+                {chore.status === 'pending' && (
+                  <Button
+                    onPress={() => handleCompleteChore(chore.id)}
+                    variant="primary"
+                    size="small"
+                    fullWidth
+                    style={{ marginTop: spacing.md }}
+                  >
+                    Mark Complete
+                  </Button>
+                )}
+              </Card>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       )}
@@ -188,33 +197,37 @@ export default function MyChoresScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.background,
   },
+
   filterContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    gap: 8,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.lg,
+    gap: spacing.sm,
+    backgroundColor: colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: colors.neutral[200],
   },
   filterTab: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#F9FAFB',
+    flex: 1,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.surface,
+    alignItems: 'center',
   },
   filterTabActive: {
-    backgroundColor: '#10B981',
+    backgroundColor: colors.primary[500],
   },
   filterText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#6B7280',
+    ...typography.label,
+    color: colors.text.secondary,
   },
   filterTextActive: {
-    color: '#fff',
+    color: colors.text.inverse,
   },
+
   center: {
     flex: 1,
     justifyContent: 'center',
@@ -224,106 +237,81 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.xl,
   },
   emptyEmoji: {
     fontSize: 64,
-    marginBottom: 16,
+    marginBottom: spacing.lg,
   },
   emptyTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#111827',
-    marginBottom: 8,
+    ...typography.h3,
+    color: colors.text.primary,
+    marginBottom: spacing.sm,
   },
   emptySubtitle: {
-    fontSize: 16,
-    color: '#6B7280',
+    ...typography.body,
+    color: colors.text.secondary,
     textAlign: 'center',
   },
+
   list: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 16,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.lg,
   },
+
   choreCard: {
-    backgroundColor: '#F9FAFB',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+    marginBottom: spacing.md,
     borderLeftWidth: 4,
-    borderLeftColor: '#10B981',
+    borderLeftColor: colors.primary[500],
   },
   choreHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   choreTitle: {
     flex: 1,
   },
   choreName: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#111827',
+    ...typography.bodyMedium,
+    color: colors.text.primary,
   },
   choreDescription: {
-    fontSize: 14,
-    color: '#6B7280',
-    marginTop: 4,
+    ...typography.bodySmall,
+    color: colors.text.secondary,
+    marginTop: spacing.xs,
   },
   statusBadge: {
     borderWidth: 1,
-    borderRadius: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    borderRadius: borderRadius.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    marginLeft: spacing.md,
   },
   statusText: {
-    fontSize: 12,
+    ...typography.labelSmall,
     fontWeight: '600',
   },
+
   choreMetaContainer: {
     flexDirection: 'row',
-    gap: 12,
-    marginBottom: 16,
+    gap: spacing.lg,
+    marginBottom: spacing.md,
   },
   choreMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: spacing.xs,
   },
   metaLabel: {
-    fontSize: 12,
-    color: '#6B7280',
+    ...typography.labelSmall,
+    color: colors.text.secondary,
   },
   metaValue: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#111827',
-  },
-  completeButton: {
-    backgroundColor: '#10B981',
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  completeButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  completedBanner: {
-    backgroundColor: '#F0FDF4',
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-    borderColor: '#10B981',
-    borderWidth: 1,
-  },
-  completedText: {
-    color: '#10B981',
-    fontSize: 14,
+    ...typography.labelSmall,
+    color: colors.text.primary,
     fontWeight: '600',
   },
 });

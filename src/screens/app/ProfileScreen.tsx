@@ -143,7 +143,7 @@ export default function ProfileScreen({ navigation }: any) {
                 <Switch
                   value={notifications}
                   onValueChange={setNotifications}
-                  trackColor={{ false: '#E5E7EB', true: '#10B981' }}
+                  trackColor={{ false: '#E5E7EB', true: colors.primary[500] }}
                   thumbColor={notifications ? '#fff' : '#fff'}
                 />
               </View>
@@ -189,7 +189,7 @@ export default function ProfileScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.background,
   },
   content: {
     padding: 20,
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
   userCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 32,
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: '#10B981',
+    backgroundColor: colors.primary[500],
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -222,12 +222,12 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.text.primary,
     marginBottom: 4,
   },
   userEmail: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.text.secondary,
   },
   section: {
     marginBottom: 24,
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#6B7280',
+    color: colors.text.secondary,
     textTransform: 'uppercase',
     marginBottom: 12,
   },
@@ -243,44 +243,44 @@ const styles = StyleSheet.create({
     backgroundColor: 'linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%)',
     backgroundColor: '#F0FDF4',
     borderWidth: 2,
-    borderColor: '#10B981',
+    borderColor: colors.primary[500],
     borderRadius: 12,
     padding: 16,
   },
   premiumTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#10B981',
+    color: colors.primary[500],
     marginBottom: 4,
   },
   premiumText: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.text.secondary,
     marginBottom: 8,
   },
   premiumExpiry: {
     fontSize: 12,
-    color: '#10B981',
+    color: colors.primary[500],
     fontWeight: '500',
   },
   freeCard: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
   },
   freeTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.text.primary,
     marginBottom: 4,
   },
   freeText: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.text.secondary,
     marginBottom: 12,
   },
   upgradeButton: {
-    backgroundColor: '#10B981',
+    backgroundColor: colors.primary[500],
     borderRadius: 8,
     paddingVertical: 10,
     alignItems: 'center',
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surface,
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -306,15 +306,15 @@ const styles = StyleSheet.create({
   settingName: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#111827',
+    color: colors.text.primary,
   },
   settingValue: {
     fontSize: 13,
-    color: '#6B7280',
+    color: colors.text.secondary,
     marginTop: 4,
   },
   actionButton: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surface,
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
   actionButtonText: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#111827',
+    color: colors.text.primary,
   },
   dangerButton: {
     backgroundColor: '#FEF2F2',
@@ -350,11 +350,11 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.text.primary,
     marginBottom: 4,
   },
   footerSubtext: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.text.secondary,
   },
 });

@@ -187,7 +187,7 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.background,
   },
   center: {
     flex: 1,
@@ -207,12 +207,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.text.primary,
     marginBottom: 8,
   },
   emptySubtitle: {
     fontSize: 16,
-    color: '#6B7280',
+    color: colors.text.secondary,
     textAlign: 'center',
   },
   messageList: {
@@ -228,35 +228,35 @@ const styles = StyleSheet.create({
   },
   senderName: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.text.secondary,
     marginBottom: 4,
     marginLeft: 12,
   },
   messageBubble: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 8,
     maxWidth: '80%',
   },
   messageBubbleOwn: {
-    backgroundColor: '#10B981',
+    backgroundColor: colors.primary[500],
   },
   messageBubbleAnonymous: {
     borderWidth: 1,
-    borderColor: '#10B981',
+    borderColor: colors.primary[500],
     backgroundColor: '#F0FDF4',
   },
   messageText: {
     fontSize: 16,
-    color: '#111827',
+    color: colors.text.primary,
   },
   messageTextOwn: {
-    color: '#ffffff',
+    color: colors.background,
   },
   anonymousLabel: {
     fontSize: 10,
-    color: '#10B981',
+    color: colors.primary[500],
     marginTop: 4,
     fontStyle: 'italic',
   },
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     paddingHorizontal: 16,
     paddingBottom: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.background,
     borderTopWidth: 1,
     borderTopColor: '#E5E7EB',
   },
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: '#E5E7EB',
     borderRadius: 8,
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
     maxHeight: 100,
   },
   sendButton: {
-    backgroundColor: '#10B981',
+    backgroundColor: colors.primary[500],
     borderRadius: 8,
     paddingHorizontal: 20,
     justifyContent: 'center',
@@ -311,17 +311,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 4,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surface,
   },
   toggleButtonActive: {
     backgroundColor: '#F0FDF4',
   },
   toggleText: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.text.secondary,
   },
   toggleTextActive: {
-    color: '#10B981',
+    color: colors.primary[500],
     fontWeight: '600',
   },
 });
